@@ -4,7 +4,7 @@ const postModel = new mongoose.Schema({
 
 
       userId: {
-        type: Number,
+        type: String,
         required: true,
       },
      nickname: {

@@ -4,7 +4,7 @@ const User  = require("../schemas/user");
 module.exports = (req, res, next) => {
   const { authorization } = req.headers;
   const [authType, authToken] = (authorization || "").split(" "); //공백없애주기
-
+  
   if (!authToken || authType !== "Bearer") {
     res.status(401).send({
       errorMessage: "로그인 후 이용 가능한 기능입니다.",
@@ -13,9 +13,10 @@ module.exports = (req, res, next) => {
   }
 
   try {
-    const { userId } = jwt.verify(authToken, "customized-secret-key");
+    const { userId } = jwt.verify(authToken, "my-secret-key");
     User.findById(userId).then((user) => {
       res.locals.user = user;
+      
       next();
     });
   } catch (err) {

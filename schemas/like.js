@@ -27,7 +27,7 @@ const likeModel = new mongoose.Schema({
     
 
 
-module.exports = mongoose.model("Comment", likeModel);
+module.exports = mongoose.model("Like", likeModel);
 
 
 //{  "data": [{ "postId": 4,     

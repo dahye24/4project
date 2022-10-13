@@ -1,6 +1,6 @@
 const express = require("express");
 
-const {Users} = require("../schemas/user");
+const Users = require("../schemas/user");
 const jwt = require("jsonwebtoken");
 
 const authMiddleware = require("../middlewares/auth-middleware");
@@ -10,10 +10,7 @@ const router = express.Router();
 router.post("/login", async (req, res) => {                        //로그인하기!
     const { nickname, password } = req.body; //닉네임과 비번 불러오기
 
-    const user = await Users.findOne({ 
-        where:
-        { nickname }
-    }); 
+    const user = await Users.findOne({nickname}); 
 
     if (!user || password !== user.password) {   // 입력한 값이 데이터 베이스에 없으면
         res.status(400).send({

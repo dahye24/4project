@@ -14,7 +14,7 @@ router.post("/posts", authMiddleware, async (req, res) => {
 
      const {userId,nickname} = res.locals.user  //계정 id,nickname받기
 
-     await Posts.create({ userId,nickname,title,content,likes});  //Posts에다 넣어주기
+     await Posts.create({ userId,nickname,title,content,likes:0});  //Posts에다 넣어주기
 
     res.json({ "message": "게시글 작성에 성공하였습니다." });
 });
@@ -59,19 +59,8 @@ router.get("/posts/:postId", async (req, res) => {
 
     const {postId} = req.params;   //params는 매개변수 
 
-    const posts = await Posts.findOne({_id : postId})
-    const {userId,nickname,title,content,createdAt,updatedAt,likes} = posts
-    const post = {
-        postId,
-        userId,
-        nickname,
-        title,
-        content,
-        createdAt,
-        updatedAt,
-        likes
-        
-    }
+    const post = await Posts.findOne({_id : postId})  
+   
     res.json({ detail : post });
 });
 
@@ -80,10 +69,10 @@ router.put("/posts/:postId", authMiddleware, async (req, res) => {
 
     const {postId} = req.params;
     const { title,content } = req.body;
-    const {user} = res.locals;
+    const userId = res.locals.user._id;
 
-    const userpass = await Posts.findOne({_id : postId}) //////////
-    if(usesr.nickname === userpass.nickname){
+    const post = await Posts.findOne({_id : postId}) 
+    if(String(userId) === post.userId){
         await Posts.updateOne({_id : postId},{$set: {title, content}})
         res.send({ result : "게시글을 수정하였습니다."})
     } else {
@@ -93,13 +82,13 @@ router.put("/posts/:postId", authMiddleware, async (req, res) => {
 });
 
 // 게시글 삭제 DELETE ( ex) localhost:3000/api/posts/postid값 )
-router.delete("/posts/:postId", async (req, res) => {
+router.delete("/posts/:postId",authMiddleware, async (req, res) => {
 
     const {postId} = req.params;
     const {user} = res.locals;
-
-    const userpass = await Posts.findOne({_id : postId})
-    if(user.nickname === userpass.nickname){
+    
+    const post = await Posts.findOne({_id : postId})
+    if(String(user._Id) === post.userId){
         await Posts.deleteOne({_id : postId})
         res.send({ result : "게시글을 삭제하였습니다."})
     } else {

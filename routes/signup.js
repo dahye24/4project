@@ -1,6 +1,6 @@
 const express = require("express");
 
-const {Users} = require("../schemas/user");
+const Users = require("../schemas/user");
 
 const router = express.Router();
 
@@ -24,7 +24,7 @@ router.post("/signup", async (req, res) => {               //회원가입
         return;
     }
 
-    const existUsers = await Users.findone({ where: {nickname} });    //닉네임이 겹치는게 있는지 찾기
+    const existUsers = await Users.find({ nickname });    //닉네임이 겹치는게 있는지 찾기
     if(existUsers.length) {   //하나라도 있다면 에러 메세지
         res.status(400).send({
             errorMessage: '이미 사용중인 닉네임입니다.',
@@ -32,7 +32,7 @@ router.post("/signup", async (req, res) => {               //회원가입
         return;
     }
 
-    const user = new User({ nickname, password });  //사용자 저장하기
+    const user = new Users({ nickname, password });  //사용자 저장하기
     await user.save();
 
     res.status(201).send({  "message": "회원 가입에 성공하였습니다."});  //사용자가 생성 됐으므로 (Rest API 원칙에 created라는 201이라는 status code가 있다.)
